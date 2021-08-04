@@ -38,8 +38,11 @@ program cime_driver
   use cime_comp_mod, only : cime_final
   use cime_comp_mod, only : cime_pre_init2_lb
   use seq_comm_mct,  only : logunit
+  use forpy_mod
 
   implicit none
+
+  integer :: ierror
 
   !--------------------------------------------------------------------------
   ! timing variables
@@ -150,7 +153,18 @@ program cime_driver
   !--------------------------------------------------------------------------
   ! Call the run and finalize routines.
   !--------------------------------------------------------------------------
+  
+  print*,"initializing forpy"
+  ierror = forpy_initialize()
+  if (ierror /= 0) then
+    print*,"forpy error:"
+    call err_print
+  else
+    print*,"forpy initialized w/o error"
+  endif
+
   call cime_run()
+  call forpy_finalize
   call cime_final()
 
   !--------------------------------------------------------------------------
